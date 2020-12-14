@@ -1,0 +1,201 @@
+\documentclass[letterpaper,12pt,oneside]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amssymb,amsmath}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{graphicx}
+\setlength{\parskip}{12pt}
+\setlength{\parindent}{0pt}
+\usepackage[left=.6in,right=.6in,top=0.8in,bottom=0.8in]{geometry}
+
+
+\begin{document}
+\begin{center}
+Personal notes on continuum mechanics
+\end{center}
+
+\section{Kinematics and coordinate systems}
+
+Vectors and matrices, as linear algebra objects, should not be confused with their coordinates. The coordinates are specific to given bases, while the objects themselves are unique regardless of the basis in which they are expressed.
+
+For example, a vector $\mathbf{V}=(a,b,c)$ in $\mathbb{R}^3$ has coordinates $\mathbf{V}_{\{\mathbf{\hat{e}_1},\mathbf{\hat{e}_2},\mathbf{\hat{e}_3}\}} = (a,b,c)$ in the standard basis $\hat{B}=\{\mathbf{\hat{e}_1} =(1,0,0),\mathbf{\hat{e}_2} =(0,1,0),\mathbf{\hat{e}_3} =(0,0,1)\}$. In a basis $B=\{\mathbf{E_1} =(1/2,0,0),\mathbf{E_2} =(0,1/2,0),\mathbf{E_3} =(0,0,1/2)\}$, the coordinates of \emph{the same vector} are $\mathbf{V}_{\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}} = (2a,2b,2c)$. 
+
+Writing $\mathbf{V}_B = (V_{E_1},V_{E_2},V_{E_3})$ the coordinates of a vector $\mathbf{V}$ expressed in a basis $B=\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}$, we have the linear combination:
+\begin{equation}
+\mathbf{V} = V_{E_1}\mathbf{E_1} + V_{E_2}\mathbf{E_2} + V_{E_3}\mathbf{E_3}
+\end{equation}
+which can also be expressed in matrix form as:
+\begin{equation}
+\mathbf{V} = \mathbf{P}_{\hat{B}}^B \mathbf{V}_B
+\end{equation}
+where $\mathbf{P}_{\hat{B}}^B$ is the change-of-basis matrix\footnote{It is important to notice, to avoid confusion, that the bases are used in a reverted order when compared to the terminology, i.e. in (\ref{eq:basis_change_B_B0}) the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from $B$ to $B_0$ multiplies the vector $\mathbf{dx}_{B_0}$ expressed in the destination basis $B_0$, and not the vector $\mathbf{dx}_B$ expressed in the source basis $B$.} from $\hat{B}$ to $B$. The columns of the change-of-basis matrix $\mathbf{P}_{\hat{B}}^B$ from basis $\hat{B}$ to basis $B$ are the vectors of $B$ expressed in the basis $\hat{B}$, i.e.: $\mathbf{E_j} = {P_{\hat{B}}^B}_{ij}\mathbf{\hat{e}_i}$.
+
+\textbf{Note:} the only time a vector and its coordinates are expressed by the same n-tuple is when coordinates are given in the standard basis, i.e.: $\mathbf{V}=\mathbf{V}_{\hat{B}}$.
+
+\begin{equation}
+\mathbf{P}_{\hat{B}}^B = 
+\end{equation}
+
+
+If follows that linear algebra operations must be conducted on the vectors themselves, and not on their coordinates. This might seem trivial but has practical important in computational problems when vectors and tensors are simply given by their coordinates in a known basis, and not in their absolute (standard) coordinates.
+
+
+The basis, i.e., the coordinate system, may be chosen differently on the initial configuration $\Omega_0$ with basis $B_0(\mathbf{E_1},\mathbf{E_2},\mathbf{E_3})$ and on the deformed configuration $\Omega$ with basis $B(\mathbf{e_1},\mathbf{e_2},\mathbf{e_3})$. This has consequences on the expressions of the kinematics that are discussed herein. I am sure there is a lot of tensor algebra with co- contra-variant tensor concepts to formalize this better, this is just a note based on my understanding and knowledge of basic linear algebra and for my practical cases of interest. This is mostly a practical problem when computer software provide the kinematic quantities with reference to given bases and that other quantities calculated from them must be expressed in a different bases.
+
+\subsection{Deformation gradient}
+The deformation gradient $\mathbf{F}$ is a mixed tensor, i.e. it maps the material fiber $\mathbf{dX}$ in the initial (reference) configuration, equipped with the basis $B_0$, to the material fiber $\mathbf{dx}$ in the current (deformed) configuration, equipped with the basis $B$:
+\begin{equation}
+\mathbf{dx} = \mathbf{F} \mathbf{dX}
+\label{eq:F}
+\end{equation}
+
+Because $\mathbf{F}$ is a mixed tensor, the expression of the representative matrix of $\mathbf{F}$ depends on the basis in which the vectors $\mathbf{dx}$ and $\mathbf{dX}$ are expressed. In particular, we can express $\mathbf{dx}$ in the basis $B_0$, using the change-of-basis matrix\footnote{It is important to notice, to avoid confusion, that the bases are used in a reverted order when compared to the terminology, i.e. in (\ref{eq:basis_change_B_B0}) the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from $B$ to $B_0$ multiplies the vector $\mathbf{dx}_{B_0}$ expressed in the destination basis $B_0$, and not the vector $\mathbf{dx}_B$ expressed in the source basis $B$.} from $B$ to $B_0$, $\mathbf{P_B^{B_0}}$, as:
+\begin{equation}
+\mathbf{dx}_B = \mathbf{P_B^{B_0}} \mathbf{dx}_{B_0}
+\label{eq:basis_change_B_B0}
+\end{equation}
+\begin{equation}
+\mathbf{dx}_{B_0} = \mathbf{P_{B_0}^B} \mathbf{dx}_B
+\label{eq:basis_change_B0_B}
+\end{equation}
+with $\mathbf{P_{B_0}^B} = \mathbf{P_B^{B_0}}^{-1}$. The columns of the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from basis $B_0$ to basis $B$ are the vectors of $B$ expressed in the basis $B_0$, i.e.: $\mathbf{e_j} = \left(P_{B_0}^B\right)_{ij}\mathbf{E_i}$. Conversely, the columns of the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from basis $B$ to basis $B_0$ are the vectors of $B_0$ expressed in the basis $B$, i.e.: $\mathbf{E_j} = \left(P_B^{B_0}\right)_{ij}\mathbf{e_i}$. %Additionally, if we assume (always the case in mechanics?) that both $B_0$ and $B$ are orthonormal bases and that the transformation from $B_0$ to $B$ is a rotation, the inverse of the change-of-basis matrix is its transpose, i.e.: $\mathbf{P_{B_0}^B}^{-1} = \mathbf{P_{B_0}^B}^{T}$, that gives:
+%\begin{equation}
+%\left(P_{B_0}^B\right)_{ij} = \mathbf{E_i} \cdot \mathbf{e_j}
+%\label{eq:coordinates_P_B0_B}
+%\end{equation}
+%\begin{equation}
+%\left(P_B^{B_0}\right)_{ij} = \mathbf{e_i} \cdot \mathbf{E_j}
+%\label{eq:coordinates_P_B_B0}
+%\end{equation}
+
+The expression of the deformation gradient that maps the material fibers both expressed in the basis of the reference configuration $B_0$ becomes:
+\begin{equation}
+\mathbf{dx}_{B_0} = (\mathbf{P_{B_0}^B}\mathbf{F_{B_0}^B}) \mathbf{dX}_{B_0}
+\label{eq:F_B_B0}
+\end{equation}
+
+\subsection{Displacement gradient}
+
+
+\subsection{Strain tensor}
+From the deformation tensor can be defined the Green-Lagrange strain tensor $\mathbf{E}$:
+\begin{equation}
+\mathbf{E} = \frac{1}{2}\left(\mathbf{F}^T \mathbf{F} - \mathbf{1}\right)
+\label{eq:E}
+\end{equation}
+where $\mathbf{1}$ represents the identity application. The Green-Lagrange strain tensor is not a mixed tensor and its expression is independent of the basis in which the deformed configuration is expressed (it obviously depends on the choice of a basis for the reference configuration, which can be selected to highlight principal strains etc, that is classic). As a result, the identity in (\ref{eq:E}) is always represented by the identity matrix: $\mathbf{1} = \mathbf{I} = diag(1,1,\dots,1)$.
+
+ The deformation gradient 
+
+
+
+In such case, care must be taken in using the classical expressions relating deformation gradient, displacement gradient and strain tensor.
+
+The deformation gradient can be defined as a function of the displacement gradient $Grad(\mathbf{u})=\mathbf{H}$ as:
+\begin{equation}
+\mathbf{F} = \mathbf{1} + \mathbf{H}
+\end{equation}
+Because of the different coordinate systems, the matrix representation of the identity application, $\mathbf{1}$, \emph{is not} the identity matrix $\mathbf{I} = diag(1,1,\dots,1)$! It is instead the matrix that would map the coordinates of any vector with coordinates $\mathbf{X}(X_1,X_2,X_3)$ from the basis $B_0$ to the same with coordinates $\mathbf{x}(x_1,x_2,x_3)$ in $B$, i.e.: $\mathbf{x} = \mathbf{1} \mathbf{X}$. 
+
+By definition, the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from $B_0$ to $B$, defined as: $\mathbf{X} = \mathbf{P_{B_0}^B} \mathbf{x}$. The columns of the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from basis $B_0$ to basis $B$ are the vectors of $B$ expressed in the basis $B_0$, i.e.: $\mathbf{e_j} = P_{ij}\mathbf{E_i} \rightarrow P_{ij} = \mathbf{e_j} \cdot \mathbf{E_i}$.
+
+The identity matrix expressed from the basis $B_0$ to the basis $B$ is therefore \emph{the inverse of the change-of-basis matrix}, i.e.: $\mathbf{1}_{B_0}^B = \mathbf{P_{B_0}^B}^{-1}$.
+
+Let us assume that both $B_0$ and $B$ are orthonormal bases and that the transformation from $B_0$ to $B$ is a rotation. With these assumptions, we obtain that the inverse of the change-of-basis matrix is its transpose, i.e.: $\mathbf{P_{B_0}^B}^{-1} = \mathbf{P_{B_0}^B}^{T}$.
+
+
+
+The identity can be represented by the change-of-basis matrix $\mathbf{P_{B_0}^B}$, from $B$ to $B_0$, defined as:
+
+The coordinates matrix $\mathbf{T}$ of the basis vectors of $B$ expressed as a function of the basis vectors of $B_0$
+\begin{equation}
+\mathbf{T} =
+\begin{array}{cc}
+& \begin{array}{ccc} X & Y & Z \end{array} \\
+\begin{array}{c} x \\ y \\ z \end{array} &
+\left(\begin{array}{ccc}
+T_{11} & T_{12} & T_{13} \\
+T_{21} & T_{22} & T_{23} \\
+T_{31} & T_{32} & T_{33}
+\end{array}\right)
+\end{array}
+\end{equation}
+
+
+
+\section{Derivative of strain with respect to deformation gradient}
+
+This derivative comes up when computing the Jacobian of stress in function of the deformation gradient (e.g., general stress-deformation socket of external materials in COMSOL). We have:
+\begin{equation}
+\frac{\partial \mathbf{S}}{\partial \mathbf{F}} = \frac{\partial \mathbf{S}}{\partial \mathbf{E}} \frac{\partial \mathbf{E}}{\partial \mathbf{F}}
+\end{equation}
+where the first derivative $\frac{\partial \mathbf{S}}{\partial \mathbf{E}}$ is simply the stiffness tensor of the material.
+
+The second derivative $\frac{\partial \mathbf{E}}{\partial \mathbf{F}}$ expresses the variations in strain tensor as a function of the variations in deformation gradient:
+\begin{equation}
+d\mathbf{E} = \frac{\partial \mathbf{E}}{\partial \mathbf{F}} d\mathbf{F}
+\end{equation}
+
+We use Voigt notation for the strain tensor (symmetric) and row-major order expansion for the deformation gradient (non-symmetric) in order to express the tensor as 2D matrices:
+\begin{equation}
+\mathbf{E}_{Voigt} = (E_{11},E_{22},E_{33},E_{23},E_{13},E_{12})^T
+\end{equation}
+\begin{equation}
+\mathbf{F}_{row-major} = (F_{11},F_{12},F_{13},F_{21},F_{22},F_{23},F_{31},F_{32},F_{33})^T
+\end{equation}
+
+\subsection{Green-Lagrange strain tensor}
+The Green-Lagrange strain tensor is defined by:
+\begin{equation}
+\mathbf{E} = \frac{1}{2}\left(\mathbf{F}^T \mathbf{F} - \mathbf{1}\right)
+\end{equation}
+In index notation:
+\begin{equation}
+E_{ij} = \frac{1}{2}\left(F_{ki} F_{kj} - \delta_{ij}\right)
+\end{equation}
+from which we can write:
+\begin{equation}
+\frac{\partial E_{ij}}{\partial F_{kl}} = \frac{1}{2}\left(F_{kj} \delta_{li} + F_{ki} \delta_{lj}\right)
+\end{equation}
+and gives the following 6-by-9 matrix, verifying $d\mathbf{E}_{Voigt} = \frac{\partial \mathbf{E}}{\partial \mathbf{F}} d\mathbf{F}_{row-major}$:
+\begin{equation}
+\frac{\partial \mathbf{E}}{\partial \mathbf{F}} = \frac{1}{2}
+\left[\begin{array}{ccccccccc}
+2F_{11} & 0 & 0 & 2F_{21} & 0 & 0 & 2F_{31} & 0 & 0 \\
+0 & 2F_{12} & 0 & 0 & 2F_{22} & 0 & 0 & 2F_{32} & 0 \\
+0 & 0 & 2F_{13} & 0 & 0 & 2F_{23} & 0 & 0 & 2F_{33} \\
+0 & F_{13} & F_{12} & 0 & F_{23} & F_{22} & 0 & F_{33} & F_{32} \\
+F_{13} & 0 & F_{11} & F_{23} & 0 & F_{21} & F_{33} & 0 & F_{31} \\
+F_{12} & F_{11} & 0 & F_{22} & F_{21} & 0 & F_{32} & F_{31} & 0
+\end{array}\right]
+\end{equation}
+
+\subsection{Linearized (engineering) strain tensor}
+The linearized strain tensor is defined by:
+\begin{equation}
+\boldsymbol{\varepsilon} = \frac{1}{2}\left(\mathbf{F}^T + \mathbf{F}\right) - \mathbf{1}
+\end{equation}
+In index notation:
+\begin{equation}
+\varepsilon_{ij} = \frac{1}{2}\left(F_{ji} + F_{ij}\right) - \delta_{ij}
+\end{equation}
+from which we can write:
+\begin{equation}
+\frac{\partial \varepsilon_{ij}}{\partial F_{kl}} = \frac{1}{2}\left(\delta_{jk}\delta_{il} + \delta_{ik}\delta_{jl} \right)
+\end{equation}
+and gives the following 6-by-9 matrix, verifying:
+\begin{equation}
+\frac{\partial \boldsymbol{\varepsilon}}{\partial \mathbf{F}} = \frac{1}{2}
+\left[\begin{array}{ccccccccc}
+2 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 2 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 2 \\
+0 & 0 & 0 & 0 & 0 & 1 & 0 & 1 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 \\
+0 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0
+\end{array}\right]
+\end{equation}
+We can see that the small strain approximation corresponds to a deformation gradient equal to the identity, i.e. undeformed: $\frac{\partial \boldsymbol{\varepsilon}}{\partial \mathbf{F}} = \frac{\partial \mathbf{E}}{\partial \mathbf{F}}(\mathbf{F}=\mathbf{1})$.
+\end{document}
+
