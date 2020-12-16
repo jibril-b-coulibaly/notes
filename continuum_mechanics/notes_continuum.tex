@@ -15,51 +15,80 @@
 Personal notes on continuum mechanics
 \end{center}
 
+\chapter{Useful tools for numerical implementation}
 \section{Kinematics and coordinate systems}
+\subsection{Generalities}
 
-Vectors and matrices, as linear algebra objects, should not be confused with their coordinates. The coordinates are specific to given bases, while the objects themselves are unique regardless of the basis in which they are expressed.
+Vectors and matrices, as linear algebra objects, should not be confused with their coordinates. The coordinates are specific to given bases, while the objects themselves are uniquely defined regardless of the basis in which they are expressed. For example, a vector $\mathbf{V}=(a,b,c)$ in $\mathbb{R}^3$ has coordinates $\mathbf{V}_{\{\mathbf{\hat{e}_1},\mathbf{\hat{e}_2},\mathbf{\hat{e}_3}\}} = (a,b,c)$ in the standard basis $\hat{B}=\{\mathbf{\hat{e}_1} =(1,0,0),\mathbf{\hat{e}_2} =(0,1,0),\mathbf{\hat{e}_3} =(0,0,1)\}$. In a basis $B=\{\mathbf{E_1} =(1/2,0,0),\mathbf{E_2} =(0,1/2,0),\mathbf{E_3} =(0,0,1/2)\}$, the coordinates of \emph{the same vector} are $\mathbf{V}_{\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}} = (2a,2b,2c)$. 
 
-For example, a vector $\mathbf{V}=(a,b,c)$ in $\mathbb{R}^3$ has coordinates $\mathbf{V}_{\{\mathbf{\hat{e}_1},\mathbf{\hat{e}_2},\mathbf{\hat{e}_3}\}} = (a,b,c)$ in the standard basis $\hat{B}=\{\mathbf{\hat{e}_1} =(1,0,0),\mathbf{\hat{e}_2} =(0,1,0),\mathbf{\hat{e}_3} =(0,0,1)\}$. In a basis $B=\{\mathbf{E_1} =(1/2,0,0),\mathbf{E_2} =(0,1/2,0),\mathbf{E_3} =(0,0,1/2)\}$, the coordinates of \emph{the same vector} are $\mathbf{V}_{\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}} = (2a,2b,2c)$. 
-
-Writing $\mathbf{V}_B = (V_{E_1},V_{E_2},V_{E_3})$ the coordinates of a vector $\mathbf{V}$ expressed in a basis $B=\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}$, we have the linear combination:
+Considering the coordinates $\mathbf{V}_B = (V_{E_1},V_{E_2},V_{E_3})$ of a vector $\mathbf{V}$ expressed in a basis $B=\{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\}$ and the coordinates $\mathbf{V}_{B'} = (V_{E'_1},V_{E'_2},V_{E'_3})$ of the same vector $\mathbf{V}$ expressed in a different basis $B'=\{\mathbf{E'_1},\mathbf{E'_2},\mathbf{E'_3}\}$, we have the linear combination:
 \begin{equation}
-\mathbf{V} = V_{E_1}\mathbf{E_1} + V_{E_2}\mathbf{E_2} + V_{E_3}\mathbf{E_3}
+\mathbf{V} = V_{E_1}\mathbf{E_1} + V_{E_2}\mathbf{E_2} + V_{E_3}\mathbf{E_3} = V_{E'_1}\mathbf{E'_1} + V_{E'_2}\mathbf{E'_2} + V_{E'_3}\mathbf{E'_3}
 \end{equation}
-which can also be expressed in matrix form as:
+and the relationship between coordinates writes:
 \begin{equation}
-\mathbf{V} = \mathbf{P}_{\hat{B}}^B \mathbf{V}_B
+\left(\begin{array}{c}
+V_{E_1} \\ V_{E_2} \\ V_{E_3}
+\end{array}\right) =
+\left(\begin{array}{ccc}
+\frac{\partial \mathbf{E'_1}}{\partial \mathbf{E_1}} & \frac{\partial \mathbf{E'_2}}{\partial \mathbf{E_1}} & \frac{\partial \mathbf{E'_3}}{\partial \mathbf{E_1}} \\
+\frac{\partial \mathbf{E'_1}}{\partial \mathbf{E_2}} & \frac{\partial \mathbf{E'_2}}{\partial \mathbf{E_2}} & \frac{\partial \mathbf{E'_3}}{\partial \mathbf{E_2}} \\
+\frac{\partial \mathbf{E'_1}}{\partial \mathbf{E_3}} & \frac{\partial \mathbf{E'_2}}{\partial \mathbf{E_3}} & \frac{\partial \mathbf{E'_3}}{\partial \mathbf{E_3}} \\
+\end{array}\right)
+\left(\begin{array}{c}
+V_{E'_1} \\ V_{E'_2} \\ V_{E'_3}
+\end{array}\right)
 \end{equation}
-where $\mathbf{P}_{\hat{B}}^B$ is the change-of-basis matrix\footnote{It is important to notice, to avoid confusion, that the bases are used in a reverted order when compared to the terminology, i.e. in (\ref{eq:basis_change_B_B0}) the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from $B$ to $B_0$ multiplies the vector $\mathbf{dx}_{B_0}$ expressed in the destination basis $B_0$, and not the vector $\mathbf{dx}_B$ expressed in the source basis $B$.} from $\hat{B}$ to $B$. The columns of the change-of-basis matrix $\mathbf{P}_{\hat{B}}^B$ from basis $\hat{B}$ to basis $B$ are the vectors of $B$ expressed in the basis $\hat{B}$, i.e.: $\mathbf{E_j} = {P_{\hat{B}}^B}_{ij}\mathbf{\hat{e}_i}$.
 
-\textbf{Note:} the only time a vector and its coordinates are expressed by the same n-tuple is when coordinates are given in the standard basis, i.e.: $\mathbf{V}=\mathbf{V}_{\hat{B}}$.
-
+This is the classic change-of-basis relationship for vectors in linear algebra\footnote{It is important to notice, to avoid confusion, that the order of the bases is reverted with that of the terminology, i.e. in (\ref{eq:change-of-basis}) the change-of-basis matrix $\mathbf{P}_B^{B'}$ from $B$ to $B'$ multiplies the vector $\mathbf{V}_{B'}$, expressed in the destination basis $B'$, and not the vector $\mathbf{V}_B$ expressed in the source basis $B$.}: 
 \begin{equation}
-\mathbf{P}_{\hat{B}}^B = 
+\mathbf{V}_B = \mathbf{P}_B^{B'} \mathbf{V}_{B'}
+\label{eq:change-of-basis}
 \end{equation}
+where the columns of the change-of-basis matrix  $\mathbf{P}_B^{B'}$ from $B$ to $B'$ are the vectors of $B'$ expressed in the basis $B$.
+%\begin{equation}
+%\mathbf{E_i} = \frac{\partial \mathbf{V}}{\partial V_{E_i}}
+%\end{equation}
 
+% i.e.: $\mathbf{E_j} = {P_{\hat{B}}^B}_{ij}\mathbf{\hat{e}_i}$.
+\textbf{Note:} in the following, we always assume that \emph{the bases are orthonormal}, which implies: $\mathbf{P}_{B'}^B = {\mathbf{P}_B^{B'}}^{-1} = {\mathbf{P}_B^{B'}}^{T}$.
+
+
+\textbf{Note:} the only time a vector and its coordinates are expressed by the same n-tuple is when coordinates are given in the standard basis, i.e.: $\mathbf{V}=\mathbf{V}_{\hat{B}}$. 
+
+\textbf{Note:} I am sure there is a lot of tensor algebra with co- and contra-variant tensor concepts to formalize this better, this is just a note based on my understanding and knowledge of basic linear algebra and for my practical cases of interest. 
 
 If follows that linear algebra operations must be conducted on the vectors themselves, and not on their coordinates. This might seem trivial but has practical important in computational problems when vectors and tensors are simply given by their coordinates in a known basis, and not in their absolute (standard) coordinates.
 
 
-The basis, i.e., the coordinate system, may be chosen differently on the initial configuration $\Omega_0$ with basis $B_0(\mathbf{E_1},\mathbf{E_2},\mathbf{E_3})$ and on the deformed configuration $\Omega$ with basis $B(\mathbf{e_1},\mathbf{e_2},\mathbf{e_3})$. This has consequences on the expressions of the kinematics that are discussed herein. I am sure there is a lot of tensor algebra with co- contra-variant tensor concepts to formalize this better, this is just a note based on my understanding and knowledge of basic linear algebra and for my practical cases of interest. This is mostly a practical problem when computer software provide the kinematic quantities with reference to given bases and that other quantities calculated from them must be expressed in a different bases.
-
 \subsection{Deformation gradient}
-The deformation gradient $\mathbf{F}$ is a mixed tensor, i.e. it maps the material fiber $\mathbf{dX}$ in the initial (reference) configuration, equipped with the basis $B_0$, to the material fiber $\mathbf{dx}$ in the current (deformed) configuration, equipped with the basis $B$:
+The deformation gradient $\mathbf{F}$ is a mixed tensor, i.e. it maps the material fiber $\mathbf{dX}$ in the initial (reference) configuration $\Omega_0$, equipped with the basis $B_0 = \{\mathbf{E_1},\mathbf{E_2},\mathbf{E_3}\} $, to the material fiber $\mathbf{dx}$ in the current (deformed) configuration $\Omega$, equipped with the basis $B = \{\mathbf{E'_1},\mathbf{E'_2},\mathbf{E'_3}\}$:
 \begin{equation}
 \mathbf{dx} = \mathbf{F} \mathbf{dX}
 \label{eq:F}
 \end{equation}
 
-Because $\mathbf{F}$ is a mixed tensor, the expression of the representative matrix of $\mathbf{F}$ depends on the basis in which the vectors $\mathbf{dx}$ and $\mathbf{dX}$ are expressed. In particular, we can express $\mathbf{dx}$ in the basis $B_0$, using the change-of-basis matrix\footnote{It is important to notice, to avoid confusion, that the bases are used in a reverted order when compared to the terminology, i.e. in (\ref{eq:basis_change_B_B0}) the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from $B$ to $B_0$ multiplies the vector $\mathbf{dx}_{B_0}$ expressed in the destination basis $B_0$, and not the vector $\mathbf{dx}_B$ expressed in the source basis $B$.} from $B$ to $B_0$, $\mathbf{P_B^{B_0}}$, as:
+The coordinates of $\mathbf{F}$ depend on the basis in which both the vectors $\mathbf{dx}$ and $\mathbf{dX}$ are expressed, i.e.:
 \begin{equation}
-\mathbf{dx}_B = \mathbf{P_B^{B_0}} \mathbf{dx}_{B_0}
-\label{eq:basis_change_B_B0}
+\mathbf{dx}_{B} = \mathbf{F}_{B_0}^B \mathbf{dX}_{B_0}
+\label{eq:F_B0_B}
 \end{equation}
+and using (\ref{eq:change-of-basis}), we can write the coordinates of the deformation gradient when both $\mathbf{dx}$ and $\mathbf{dX}$ are expressed in the same basis, e.g., the basis $B_0$ of the undeformed configuration $\Omega_0$:
 \begin{equation}
-\mathbf{dx}_{B_0} = \mathbf{P_{B_0}^B} \mathbf{dx}_B
-\label{eq:basis_change_B0_B}
+\mathbf{dx}_{B_0} = \mathbf{F}_{B_0}^{B_0} \mathbf{dX}_{B_0} = (\mathbf{P}_{B_0}^B\mathbf{F}_{B_0}^B) \mathbf{dX}_{B_0}
+\label{eq:F_B0_B0}
 \end{equation}
-with $\mathbf{P_{B_0}^B} = \mathbf{P_B^{B_0}}^{-1}$. The columns of the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from basis $B_0$ to basis $B$ are the vectors of $B$ expressed in the basis $B_0$, i.e.: $\mathbf{e_j} = \left(P_{B_0}^B\right)_{ij}\mathbf{E_i}$. Conversely, the columns of the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from basis $B$ to basis $B_0$ are the vectors of $B_0$ expressed in the basis $B$, i.e.: $\mathbf{E_j} = \left(P_B^{B_0}\right)_{ij}\mathbf{e_i}$. %Additionally, if we assume (always the case in mechanics?) that both $B_0$ and $B$ are orthonormal bases and that the transformation from $B_0$ to $B$ is a rotation, the inverse of the change-of-basis matrix is its transpose, i.e.: $\mathbf{P_{B_0}^B}^{-1} = \mathbf{P_{B_0}^B}^{T}$, that gives:
+or the basis $B$ of the deformed configuration $\Omega$:
+\begin{equation}
+\mathbf{dx}_B = \mathbf{F}_B^B \mathbf{dX}_B = (\mathbf{F}_{B_0}^B \mathbf{P}_{B_0}^B) \mathbf{dX}_B
+\label{eq:F_B_B}
+\end{equation}
+This is the classic change-of-basis relationship for matrices in linear algebra:
+\begin{equation}
+\mathbf{F}_B^B  = {\mathbf{P}_{B_0}^B}^T \mathbf{F}_{B_0}^{B_0} \mathbf{P}_{B_0}^B
+\label{eq:change_basis_matrix}
+\end{equation}
+%with $\mathbf{P_{B_0}^B} = \mathbf{P_B^{B_0}}^{-1}$. The columns of the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from basis $B_0$ to basis $B$ are the vectors of $B$ expressed in the basis $B_0$, i.e.: $\mathbf{e_j} = \left(P_{B_0}^B\right)_{ij}\mathbf{E_i}$. Conversely, the columns of the change-of-basis matrix $\mathbf{P_B^{B_0}}$ from basis $B$ to basis $B_0$ are the vectors of $B_0$ expressed in the basis $B$, i.e.: $\mathbf{E_j} = \left(P_B^{B_0}\right)_{ij}\mathbf{e_i}$. Additionally, if we assume (always the case in mechanics?) that both $B_0$ and $B$ are orthonormal bases and that the transformation from $B_0$ to $B$ is a rotation, the inverse of the change-of-basis matrix is its transpose, i.e.: $\mathbf{P_{B_0}^B}^{-1} = \mathbf{P_{B_0}^B}^{T}$, that gives:
 %\begin{equation}
 %\left(P_{B_0}^B\right)_{ij} = \mathbf{E_i} \cdot \mathbf{e_j}
 %\label{eq:coordinates_P_B0_B}
@@ -69,58 +98,125 @@ with $\mathbf{P_{B_0}^B} = \mathbf{P_B^{B_0}}^{-1}$. The columns of the change-o
 %\label{eq:coordinates_P_B_B0}
 %\end{equation}
 
-The expression of the deformation gradient that maps the material fibers both expressed in the basis of the reference configuration $B_0$ becomes:
-\begin{equation}
-\mathbf{dx}_{B_0} = (\mathbf{P_{B_0}^B}\mathbf{F_{B_0}^B}) \mathbf{dX}_{B_0}
-\label{eq:F_B_B0}
-\end{equation}
-
-\subsection{Displacement gradient}
+%\subsection{Displacement gradient}
 
 
 \subsection{Strain tensor}
-From the deformation tensor can be defined the Green-Lagrange strain tensor $\mathbf{E}$:
+
+Polar decomposition can be applied to the deformation gradient: $\mathbf{F} = \mathbf{RU}$, defining the right Cauchy-Green tensor $\mathbf{C} = \mathbf{U}^2 = \mathbf{F}^T\mathbf{F}$. This tensor is a Lagrangian measure of deformation and is defined on $\Omega_0$. From there, the Green-Lagrange strain tensor $\mathbf{E}$ is defined as:
 \begin{equation}
 \mathbf{E} = \frac{1}{2}\left(\mathbf{F}^T \mathbf{F} - \mathbf{1}\right)
 \label{eq:E}
 \end{equation}
-where $\mathbf{1}$ represents the identity application. The Green-Lagrange strain tensor is not a mixed tensor and its expression is independent of the basis in which the deformed configuration is expressed (it obviously depends on the choice of a basis for the reference configuration, which can be selected to highlight principal strains etc, that is classic). As a result, the identity in (\ref{eq:E}) is always represented by the identity matrix: $\mathbf{1} = \mathbf{I} = diag(1,1,\dots,1)$.
+where $\mathbf{1}$ represents the identity.
 
- The deformation gradient 
-
-
-
-In such case, care must be taken in using the classical expressions relating deformation gradient, displacement gradient and strain tensor.
-
-The deformation gradient can be defined as a function of the displacement gradient $Grad(\mathbf{u})=\mathbf{H}$ as:
+The Green-Lagrange strain tensor characterizes the deformation. It is not a mixed tensor and because it is solely defined on $\Omega_0$, its coordinates are independent of the basis in which the deformed configuration is expressed. Indeed from (\ref{eq:F_B0_B0}) we observe that for any basis $B'$ of $\Omega$:
 \begin{equation}
-\mathbf{F} = \mathbf{1} + \mathbf{H}
+{\mathbf{F}_{B_0}^{B_0}}^T \mathbf{F}_{B_0}^{B_0} = (\mathbf{P}_{B_0}^{B'} \mathbf{F}_{B_0}^{B'})^T \mathbf{P}_{B_0}^{B'} \mathbf{F}_{B_0}^{B'} = {\mathbf{F}_{B_0}^{B'}}^T {\mathbf{P}_{B_0}^{B'}}^T  \mathbf{P}_{B_0}^{B'} \mathbf{F}_{B_0}^{B'} = {\mathbf{F}_{B_0}^{B'}}^T \mathbf{F}_{B_0}^{B'}
 \end{equation}
-Because of the different coordinate systems, the matrix representation of the identity application, $\mathbf{1}$, \emph{is not} the identity matrix $\mathbf{I} = diag(1,1,\dots,1)$! It is instead the matrix that would map the coordinates of any vector with coordinates $\mathbf{X}(X_1,X_2,X_3)$ from the basis $B_0$ to the same with coordinates $\mathbf{x}(x_1,x_2,x_3)$ in $B$, i.e.: $\mathbf{x} = \mathbf{1} \mathbf{X}$. 
-
-By definition, the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from $B_0$ to $B$, defined as: $\mathbf{X} = \mathbf{P_{B_0}^B} \mathbf{x}$. The columns of the change-of-basis matrix $\mathbf{P_{B_0}^B}$ from basis $B_0$ to basis $B$ are the vectors of $B$ expressed in the basis $B_0$, i.e.: $\mathbf{e_j} = P_{ij}\mathbf{E_i} \rightarrow P_{ij} = \mathbf{e_j} \cdot \mathbf{E_i}$.
-
-The identity matrix expressed from the basis $B_0$ to the basis $B$ is therefore \emph{the inverse of the change-of-basis matrix}, i.e.: $\mathbf{1}_{B_0}^B = \mathbf{P_{B_0}^B}^{-1}$.
-
-Let us assume that both $B_0$ and $B$ are orthonormal bases and that the transformation from $B_0$ to $B$ is a rotation. With these assumptions, we obtain that the inverse of the change-of-basis matrix is its transpose, i.e.: $\mathbf{P_{B_0}^B}^{-1} = \mathbf{P_{B_0}^B}^{T}$.
-
-
-
-The identity can be represented by the change-of-basis matrix $\mathbf{P_{B_0}^B}$, from $B$ to $B_0$, defined as:
-
-The coordinates matrix $\mathbf{T}$ of the basis vectors of $B$ expressed as a function of the basis vectors of $B_0$
+so that in terms of coordinates, and for any basis $B'$ of $\Omega$, we have:
 \begin{equation}
-\mathbf{T} =
-\begin{array}{cc}
-& \begin{array}{ccc} X & Y & Z \end{array} \\
-\begin{array}{c} x \\ y \\ z \end{array} &
-\left(\begin{array}{ccc}
-T_{11} & T_{12} & T_{13} \\
-T_{21} & T_{22} & T_{23} \\
-T_{31} & T_{32} & T_{33}
-\end{array}\right)
-\end{array}
+\mathbf{E}_{B_0} = \frac{1}{2}\left({\mathbf{F}_{B_0}^{B'}}^T \mathbf{F}_{B_0}^{B'} - \mathbf{I}\right)
+\label{eq:E_coordinates}
 \end{equation}
+with $\mathbf{I} = \mathrm{diag}(1,1,1)$ the coordinates of the identity when the source and destination bases are the same ($B_0$ in $\Omega_0$ here). The coordinates of the strain tensor obviously depend on the choice of a basis $B_0$ for the reference configuration $\Omega_0$, this classically highlights principal strains etc. From (\ref{eq:change_basis_matrix}), we can write:
+\begin{equation}
+\mathbf{E}_B = {\mathbf{P}_{B_0}^B}^T \mathbf{E}_{B_0} \mathbf{P}_{B_0}^B
+\label{eq:E_B}
+\end{equation}
+
+\paragraph{Infinitesimal strain} In some applications where strains are small, the Green-Lagrange strain is linearized into the infinitesimal strain tensor:
+\begin{equation}
+\boldsymbol{\varepsilon} = \frac{1}{2}\left(\mathbf{F}^T + \mathbf{F}\right) - \mathbf{1}
+\label{eq:E_infinitesimal}
+\end{equation}
+The infinitesimal strain tensor should also be independent of the basis in which the deformed configuration is expressed. However, (\ref{eq:E_infinitesimal}) clearly shows coordinates $\mathbf{F}_{B_0}^{B'}$ cannot be used directly here, unlike for $\mathbf{E}$.
+
+Notice that the infinitesimal strain is obtained as a first-order Taylor series expansion of Green-Lagrange strain at $\mathbf{F}=\mathbf{1}$, i.e.:
+\begin{equation}
+\mathbf{E} = \frac{1}{2}\left[(\mathbf{F}-\mathbf{1})^T \mathbf{1} + \mathbf{1}^T(\mathbf{F}-\mathbf{1})\right] + o(\mathbf{F}^2)
+\label{eq:E_Taylor}
+\end{equation}
+
+The coordinates of the identity $\mathbf{1}$ from the basis $B_0$ of $\Omega_0$ to the basis $B$ of $\Omega$,  are not $\mathbf{I} = \mathrm{diag}(1,1,1)$. Indeed, from (\ref{eq:change-of-basis}), we can see that the change-of-basis matrix $\mathbf{P}_{B_0}^B$ can also be defined as the coordinates of the identity application from the basis $B$ of $\Omega$ to the basis $B_0$ $\Omega_0$, i.e.:
+\begin{equation}
+\mathbf{1}_{B}^{B_0} = \mathbf{P}_{B_0}^{B}
+\end{equation}
+\begin{equation}
+\mathbf{1}_{B_0}^B = {\mathbf{P}_{B_0}^{B}}^T
+\end{equation}
+
+For any basis $B'$ of $\Omega$, (\ref{eq:E_Taylor}) can be expressed in terms of the coordinates as:
+\begin{equation}
+\boldsymbol{\varepsilon}_{B_0} = \frac{1}{2}\left[(\mathbf{F}_{B_0}^{B'}-\mathbf{1}_{B_0}^{B'})^T \mathbf{1}_{B_0}^{B'} + {\mathbf{1}_{B_0}^{B'}}^T(\mathbf{F}_{B_0}^{B'}-\mathbf{1}_{B_0}^{B'})\right]
+\label{eq:epsilon_coordinates}
+\end{equation}
+and the infinitesimal strain (\ref{eq:E_infinitesimal}) writes:
+\begin{equation}
+\boldsymbol{\varepsilon}_{B_0} = \frac{1}{2}\left({\mathbf{F}_{B_0}^{B'}}^T {\mathbf{P}_{B_0}^{B'}}^T + \mathbf{P}_{B_0}^{B'} \mathbf{F}_{B_0}^{B'}\right) - \mathbf{I}
+\end{equation}
+
+\subsection{Example and application}
+
+FEM software allow implementation of user-defined materials. In COMSOL Multiphysics, there is a stress--deformation socket that allows the implementation of constitutive models with the deformation gradient as an input and the second Piola-Kirchhoff stress as an output.
+
+The deformation gradient is expressed between the global coordinate system of the deformed configuration $\mathbf{dx}_B$ and the local coordinate system of the material $\mathbf{dx}_{B_0}$. The numerical 3-by-3 matrix input variable \texttt{F[3][3]} for the deformation gradient in the code is therefore expressed in its \emph{coordinates} $\mathbf{F}_{B_0}^B$, with $B_0$ and $B$ the respective bases of the initial and deformed configurations $\Omega$ and $\Omega_0$.
+
+\paragraph{Green-Lagrange strain tensor} As shown in (\ref{eq:E_coordinates}), the Green-Lagrange strain tensor $\mathbf{E}$ is independent of the basis $B$ of the deformed configuration $\Omega$. That means the following algorithm (\texttt{C} pseudo-code) to compute the Green-Lagrange strain tensor would provide the correct result:
+\begin{verbatim}
+// Correct computation of Green-Lagrange strain E
+E[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+delta[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
+for (i=0 ; i<3 ; i++)
+  for (j=0 ; j<3 ; j++)
+    for (k=0 ; k<3 ; k++)
+      E[i][j] += 0.5*(F[k][i]*F[k][j] - delta[i][j])
+\end{verbatim}
+
+\paragraph{Infinitesimal strain tensor}
+However, the infinitesimal strain tensor $\mathbf{\varepsilon}$ cannot be calculated using the input coordinates \texttt{F[3][3]}, along with the formula (\ref{eq:E_infinitesimal}), because that formula applies to linear algebra vectors and not their coordinates. If our constitutive model is formulated in terms of infinitesimal/engineering strain, the following naive implementation would return a \emph{wrong result} for the infinitesimal strain!
+\begin{verbatim}
+// Wrong computation of infinitesimal strain \varepsilon
+eps[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+delta[3][3] = {{1,0,0},{0,1,0},{0,0,1}};
+for (i=0 ; i<3 ; i++)
+  for (j=0 ; j<3 ; j++)
+    eps[i][j] = 0.5*(F[i][j] + F[j][i]) - delta[i][j]
+\end{verbatim}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%The coordinates matrix $\mathbf{T}$ of the basis vectors of $B$ expressed as a function of the basis vectors of $B_0$
+%\begin{equation}
+%\mathbf{T} =
+%\begin{array}{cc}
+%& \begin{array}{ccc} X & Y & Z \end{array} \\
+%\begin{array}{c} x \\ y \\ z \end{array} &
+%\left(\begin{array}{ccc}
+%T_{11} & T_{12} & T_{13} \\
+%T_{21} & T_{22} & T_{23} \\
+%T_{31} & T_{32} & T_{33}
+%\end{array}\right)
+%\end{array}
+%\end{equation}
 
 
 
@@ -197,5 +293,20 @@ and gives the following 6-by-9 matrix, verifying:
 \end{array}\right]
 \end{equation}
 We can see that the small strain approximation corresponds to a deformation gradient equal to the identity, i.e. undeformed: $\frac{\partial \boldsymbol{\varepsilon}}{\partial \mathbf{F}} = \frac{\partial \mathbf{E}}{\partial \mathbf{F}}(\mathbf{F}=\mathbf{1})$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \end{document}
 
