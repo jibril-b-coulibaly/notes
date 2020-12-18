@@ -298,12 +298,70 @@ We can see that the small strain approximation corresponds to a deformation grad
 
 
 
+\section{Volumetric and deviatoric decomposition of stress and strain}
+
+\subsection{Stress}
+Let the stress tensor expressed as:
+\begin{equation}
+\boldsymbol{\sigma} = 
+\left[\begin{array}{ccc}
+\sigma_{11} & \sigma_{12} & \sigma_{13} \\
+\sigma_{12} & \sigma_{22} & \sigma_{23} \\
+\sigma_{13} & \sigma_{23} & \sigma_{33}
+\end{array}\right]
+\end{equation}
+The mean stress is defined as: $p = \mathrm{tr}(\boldsymbol{\sigma})/3$, and the deviatoric stress as: $\mathbf{s} = \boldsymbol{\sigma} - p \mathbf{1}$. In Voigt notation, we can therefore write:
+\begin{equation}
+\boldsymbol{\sigma} = 
+\left(\begin{array}{c}
+\sigma_{11} \\ \sigma_{22} \\ \sigma_{33} \\ \sigma_{23} \\ \sigma_{13} \\ \sigma_{12}
+\end{array}\right)
+ = 
+\left(\begin{array}{c}
+s_{11} \\ s_{22} \\ s_{33} \\ s_{23} \\ s_{13} \\ s_{12}
+\end{array}\right)
++ p
+\left[\begin{array}{cccccc}
+1 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{array}\right]
+\end{equation}
 
 
-
-
-
-
+\subsection{Strain}
+Let the strain tensor expressed as:
+\begin{equation}
+\mathbf{E} = 
+\left[\begin{array}{ccc}
+E_{11} & E_{12} & E_{13} \\
+E_{12} & E_{22} & E_{23} \\
+E_{13} & E_{23} & E_{33}
+\end{array}\right]
+\end{equation}
+The volumetric strain is defined as: $E_v = \mathrm{tr}(\mathbf{E})$, and the deviatoric strain as: $\mathbf{E}_s = \mathbf{E} - E_v \mathbf{1} /3$. In Voigt notation, we can therefore write:
+\begin{equation}
+\mathbf{E} = 
+\left(\begin{array}{c}
+E_{11} \\ E_{22} \\ E_{33} \\ E_{23} \\ E_{13} \\ E_{12}
+\end{array}\right)
+ = 
+\left(\begin{array}{c}
+{E_s}_{11} \\ {E_s}_{22} \\ {E_s}_{33} \\ {E_s}_{23} \\ {E_s}_{13} \\ {E_s}_{12}
+\end{array}\right)
++ E_v
+\left[\begin{array}{cccccc}
+1/3 & 0 & 0 & 0 & 0 & 0 \\
+0 & 1/3 & 0 & 0 & 0 & 0 \\
+0 & 0 & 1/3 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0
+\end{array}\right]
+\end{equation}
 
 
 
