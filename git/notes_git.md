@@ -10,5 +10,6 @@ git ls-stree --name-only <branch> (display tracked files)
 
 git reset --soft HEAD^ (to cancel the last commit and keep the changes in the files)
 
-git show <SHA> (display content of commit)
+git show <commit> (display content of commit)
 
+git branch -a --contains <commit> (find branches the commit is on)
