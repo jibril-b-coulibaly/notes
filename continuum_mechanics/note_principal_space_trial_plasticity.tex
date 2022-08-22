@@ -1,0 +1,96 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[left=1in,right=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{float}
+\usepackage{url}
+\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=lack,menucolor=black,runcolor=black,urlcolor=black]{hyperref}
+
+\renewcommand{\thesection}{\arabic{section}} % Do not number chapters
+
+\setlength{\parskip}{12pt}
+
+\begin{document}
+
+\bibliographystyle{apalike}
+\renewcommand\bibname{References}
+
+\begin{center}
+{\large
+Note on the principal direction of the trial state and final state in return mapping algorithm for isotropic elastoplasticity}
+
+Jibril B. Coulibaly (\href{mailto:jbcouli@sandia.gov}{jbcouli@sandia.gov})
+\end{center}
+
+
+\section{Return mapping}
+
+Return mapping is a prediction-correction algorithm to determine the stress state of an elastoplastic material under strain-controleld loading. A strain increment $\Delta \boldsymbol{\varepsilon}$ is applied between time $t$, when all quantities are known, and $t+\Delta t$, where all quantities are sought.
+
+\subsection{Prediction - trial state}
+
+A trial state is obtained by first predicting the stress assuming the strain increment is elastic: $\Delta\boldsymbol{\varepsilon}=\Delta\boldsymbol{\varepsilon}^e$, giving:
+\begin{equation}
+\boldsymbol{\sigma}^{tr} = \boldsymbol{\sigma}_t + \boldsymbol{C}:\Delta \boldsymbol{\varepsilon}
+\end{equation}
+with $\boldsymbol{C}$ the elastic tangent operator defined by: $\boldsymbol{\sigma} = \mathbf{C} : \boldsymbol{\varepsilon}^e$.
+
+%\begin{itemize}
+%\item if the trial stress state is inside the elastic domain, i.e., yield function is negative $F\leq0$, the stress state is admissible
+%\item if the trial stress state is outside the elastic domain, i.e., yield function is positive $F>0$, the stress state is not admissible and must be "returned" onto the yield surface $F=0$ through plastic correction
+%\end{itemize}
+
+
+\subsection{Correction}
+
+For both rate-independent and rate-dependent plasticity (albeit different formulations), the rate of plastic strain can be expressed as:
+\begin{equation}
+\dot{\boldsymbol{\varepsilon}^p} = \varphi\frac{\partial G}{\partial \boldsymbol{\sigma}}
+\end{equation}
+where $\varphi$ is a plastic multiplier, characterizing the intensity of the plastic flow, and $G$ is the plastic potential. Both $\varphi$ and $G$ are scalar functions of the stress invariants.
+
+The elastic strain increment is given by: $\Delta \boldsymbol{\varepsilon}^e = \Delta \boldsymbol{\varepsilon} - \Delta \boldsymbol{\varepsilon}^p$, so that the stress correction from the trial state is:
+\begin{equation}
+\boldsymbol{\sigma}_{t+\Delta t} = \boldsymbol{\sigma}^{tr} - \boldsymbol{C}:\Delta \boldsymbol{\varepsilon}^p_{t+\Delta t}
+\label{eq:corrected}
+\end{equation}
+which is most often a non-linear equation solved for $\boldsymbol{\varepsilon}^p_{t+\Delta t}$ using an iterative process.
+
+\section{Principal directions and principal stress}
+
+\subsection{Generalities}
+
+Any symmetric real matrix $\mathbf{A}$ (e.g., 3x3) can be diagonalized as $\mathbf{A} = \mathbf{P}\mathbf{D}\mathbf{P}^T$ into a principal space given by a set or orthonormal eigenvectors $\mathbf{N}_1$, $\mathbf{N}_2$, $\mathbf{N}_3$, forming an orthogonal matrix $\mathbf{P} = [\mathbf{N}_1 \mathbf{N}_2 \mathbf{N}_3]$, i.e., $\mathbf{P}^{-1} = \mathbf{P}^T$. The corresponding eigenvalues are given by $\mathbf{D} = \mathrm{diag}[A_1, A_2, A_3]$, which allows the spectral decomposition:
+\begin{equation}
+\mathbf{A} = A_1 \underbrace{\mathbf{N}_1 \otimes \mathbf{N}_1}_{\mathbf{M}^1} + A_2 \underbrace{\mathbf{N}_2 \otimes \mathbf{N}_2}_{\mathbf{M}^2} + A_3 \underbrace{\mathbf{N}_3 \otimes \mathbf{N}_3}_{\mathbf{M}^3}
+\label{eq:spectral}
+\end{equation}
+where the $\mathbf{M}_i$ are orthogonal and sum up to the identity matrix.
+\subsection{Application to stress and plastic potential}
+
+Stress is represented by real symmetric matrices who share the same principal directions, so that:
+\begin{equation}
+\boldsymbol{\sigma}  = \sigma_1 \mathbf{M}^1 + \sigma_2 \mathbf{M}^2 + \sigma_3 \mathbf{M}^3 = \sum_{i=1}^{3} \sigma_i \mathbf{M}^i
+\end{equation}
+
+The invariants of the stress tensor are expressed as a function of the principal stresses $\sigma_i$, so that rotation of the principal directions $\mathbf{M}_i$ has no influence on the value of the invariants. As a consequence the plastic potential function $G$ is independent of the principal stress direction, i.e.:
+\begin{equation}
+\frac{\partial G}{\partial \boldsymbol{\sigma}} = \sum_{i=1}^3 \frac{\partial G}{\partial \sigma_i} \mathbf{M}^i + \underbrace{\frac{\partial G}{\partial \mathbf{M}^i}}_{=0} \sigma_i
+\end{equation}
+
+\subsection{Principal direction of trial stress and final stress}
+These considerations are valid for any stress state, at any time. In particular, when applied at the unknown converged state at time $t+\Delta t$, equation (\ref{eq:corrected}) becomes:
+\begin{equation}
+\sum_{i=1}^{3} \sigma_i \mathbf{M}^i = \boldsymbol{\sigma}^{tr} - \boldsymbol{C}:\sum_{i=1}^3 \varphi\frac{\partial G}{\partial \sigma_i} \mathbf{M}^i
+\end{equation}
+which can be rearranged as:
+\begin{equation}
+\boldsymbol{\sigma}^{tr} = \sum_{i=1}^{3} \sigma_i \mathbf{M}^i + \boldsymbol{C}:\sum_{i=1}^3 \varphi\frac{\partial G}{\partial \sigma_i} \mathbf{M}^i
+\end{equation}
+We can see that the trial stress, which is known, can be expressed as a spectral decomposition (\ref{eq:spectral}), with the same basis matrices $\mathbf{M}^i$ that the stress at time $t+\Delta t$.
+
+\paragraph{Conclusion:} this indicates that, for isotropic elastoplasticity, the principal directions of stress at time $t+\Delta t$, $\boldsymbol{\sigma}_{t+\Delta t}$, which is unknown, are the same as the principal directions of the trial stress, $\boldsymbol{\sigma}^{tr}$, which is known. This is a very strong and nice result!
+
+\end{document}
