@@ -5,9 +5,12 @@
 \usepackage{multirow}
 \usepackage{color}
 \usepackage{graphicx}
+\usepackage{bm}
 \setlength{\parskip}{12pt}
 \setlength{\parindent}{0pt}
 \usepackage[left=.6in,right=.6in,top=0.8in,bottom=0.8in]{geometry}
+%\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref}
+\usepackage{hyperref}
 
 
 \begin{document}
@@ -365,6 +368,21 @@ E_{11} \\ E_{22} \\ E_{33} \\ E_{23} \\ E_{13} \\ E_{12}
 
 
 
+\chapter{Concepts}
+
+\href{https://fr.wikipedia.org/wiki/Tenseur}{French Wikipedia on tensors}
+A second-order tensor is a bilinear form. That clarifies a lot of things for me with regards to the space strain tensor is defined in etc. Additionally its change of basis is therefore not $B=P^{-1}AP$, but $B=P^TAP$. This is identical when bases are orthonormal but if they are not, loosely speaking we can see that it scales $A$ by a factor $P^2$. This shows the definition of strain as giving the relative squared stretch of a fiber.
+
+\href{https://fr.wikipedia.org/wiki/Matrice_de_passage}{French Wikipedia on change-of-basis}
+
+
+The velocity gradient $\bm{L} = \dot{\bm{F}}\bm{F}^{-1}$ defines the rate of deformation: $\bm{D} = (\bm{L}^T + \bm{L})/2$.
+In the absence of rotation ($\bm{F} = \bm{RU}$, $\bm{R} = \bm{I}$), the rate of deformation  is equal to the time derivative of the logarithmic strain: $\bm{D} = \partial \ln(\bm{U})/\partial t$.
+
+
+\chapter{Plasticity}
+
+The second invariant of the deviatoric stress $J_2 = 1/2 tr(S^2)$ so that the radius of the yield surface in the pi-plane is not $\sqrt{J_2}$ but $\sqrt{2J_2}$.
 
 \end{document}
 
