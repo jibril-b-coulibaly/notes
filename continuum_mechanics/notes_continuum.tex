@@ -11,6 +11,7 @@
 \usepackage[left=.6in,right=.6in,top=0.8in,bottom=0.8in]{geometry}
 %\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref}
 \usepackage{hyperref}
+\usepackage{bm}
 
 
 \begin{document}
@@ -223,7 +224,7 @@ for (i=0 ; i<3 ; i++)
 
 
 
-\section{Derivative of strain with respect to deformation gradient}
+\section{Derivative with respect to deformation gradient}
 
 This derivative comes up when computing the Jacobian of stress in function of the deformation gradient (e.g., general stress-deformation socket of external materials in COMSOL). We have:
 \begin{equation}
@@ -297,8 +298,26 @@ and gives the following 6-by-9 matrix, verifying:
 \end{equation}
 We can see that the small strain approximation corresponds to a deformation gradient equal to the identity, i.e. undeformed: $\frac{\partial \boldsymbol{\varepsilon}}{\partial \mathbf{F}} = \frac{\partial \mathbf{E}}{\partial \mathbf{F}}(\mathbf{F}=\mathbf{1})$.
 
+\subsection{Invariants of the deformation gradient}
 
+\subsubsection{First invariant}
 
+First invariant:
+\begin{equation}
+I_1 = \mathrm{tr}(\bm{F}^T\bm{F})
+\end{equation}
+In index notation:
+\begin{equation}
+I_1 = F_{ij} F_{ij}
+\end{equation}
+from which we can write:
+\begin{equation}
+\frac{\partial (F_{ij} F_{ij})}{\partial F_{kl}} = 2 F_{kl}
+\end{equation}
+Finally:
+\begin{equation}
+\frac{\partial I_1}{\partial \bm{F}} = \frac{ \partial \ \mathrm{tr}(\bm{F}^T\bm{F})}{\partial \bm{F}} = 2 \bm{F}
+\end{equation}
 
 
 \section{Volumetric and deviatoric decomposition of stress and strain}
