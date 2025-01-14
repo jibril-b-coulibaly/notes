@@ -1,0 +1,130 @@
+\documentclass[letterpaper,12pt,oneside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amssymb,amsmath}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{bm}
+\setlength{\parskip}{12pt}
+\setlength{\parindent}{0pt}
+\usepackage[left=.6in,right=.6in,top=0.8in,bottom=0.8in]{geometry}
+\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref}
+\usepackage{hyperref}
+\usepackage{bm}
+
+\begin{document}
+\begin{center}
+Personal notes on fondamentals of Artificial Neural Network (ANN)
+\end{center}
+
+The document uses some of the notation from these lecture notes (\href{https://cs230.stanford.edu/files/Notation.pdf}{https://cs230.stanford.edu/files/Notation.pdf}):
+
+\begin{itemize}
+\item the example data have input $x$ and output $y$.
+\item The activation function for the $l^{\rm th}$ layer is $g^{[l]}$
+\item The activation and bias vectors for the $l^{\rm th}$ layer are $a^{[l]}$ and $b^{[l]}$, respectively
+\item The $l^{\rm th}$ layer contains $n_h^{[l]}$ units
+\item the first (input) layer $l=0$ has activation $a^{[0]}$
+\item the last (output) layer $l=L$ has activation $a^{[L]}$ also noted $\hat{y}$
+\item The weights matrix between layer $l-1$ and $l$ is noted $W^{[l]} \in \mathbb{R}^{n_h^{[l]}\times n_h^{[l-1]}}$. i.e., number of rows = number of units in layer $l$ and number of columns = number of units in layer $l-1$.
+\item the scalar cost function $J(y, \hat{y})$ can be any distance measure, e.g., least-squares $J(y, \hat{y}) = \sum_i \|y^{(i)} - \hat{y}^{(i)} \|^2$
+\end{itemize}
+
+\section{Forward Propagation}
+General activation formula in matrix form:
+\begin{equation}
+a^{[l]} = g^{[l]} \left( W^{[l]} a^{[l-1]} + b^{[l]} \right) = g^{[l]} (z^{[l]})
+\end{equation}
+or in index notation:
+\begin{equation}
+a_j^{[l]} = g^{[l]} \left( W_{jk}^{[l]} a_k^{[l-1]} + b_j^{[l]} \right) = g^{[l]} (z_j^{[l]})
+\end{equation}
+
+Note: I am immediately annoyed by the graphic representation of the weights that is commonly used where the subscripts $j$ represents the weight of the edge connecting unit $j$ of layer $l-1$ and unit $k$ of layer $l$. If such representation is used, then the weight matrix should be transposed, which I don't like as it makes index notation inconsistent. One alternative for consistency would be to mark the individual weights on graphical representations going from $l$ to $l-1$.
+
+\section{Backward Propagation}
+
+We want to determine the gradient of the cost function with respect to the model parameters, i.e., the weights and biases.
+
+Chain rule:
+\begin{equation}
+\frac{dJ}{db^{[l]}} = \frac{dJ}{dz^{[l]}} \frac{dz^{[l]}}{db^{[l]}} = \frac{dJ}{da^{[L]}} \frac{da^{[L]}}{dz^{[L]}} \frac{dz^{[L]}}{da^{[L-1]}} \cdots \frac{da^{[l]}}{dz^{[l]}} \frac{dz^{[l]}}{db^{[l]}}
+\end{equation}
+Each term is a total derivative (i.e., row matrix) evaluated at the current state of the ANN.
+
+\begin{equation}
+\frac{dJ}{dW^{[l]}} = \frac{dJ}{dz^{[l]}} \frac{dz^{[l]}}{dW^{[l]}} = \frac{dJ}{da^{[L]}} \frac{da^{[L]}}{dz^{[L]}} \frac{dz^{[L]}}{da^{[L-1]}} \cdots \frac{da^{[l]}}{dz^{[l]}} \frac{dz^{[l]}}{dW^{[l]}}
+\end{equation}
+Note: I might be abusing notations here. The derivative $\frac{dJ}{dz^{[l]}}$ would be a row-vector, but the derivative $\frac{dz^{[l]}}{dW^{[l]}}$ is a 3rd order tensor, which doesn't multiply evidently to a row-vector, unless index notation is used (and even then I'm not using the subscript/superscript distinction).
+
+Derivatives at the layer level:
+\begin{equation}
+\frac{da^{[l]}}{dz^{[l]}} = \mathrm{diag} \left( g'^{[l]} (z^{[l]}) \right)
+\end{equation}
+
+\begin{equation}
+\frac{dz^{[l]}}{da^{[l-1]}} = W^{[l]}
+\end{equation}
+
+\begin{equation}
+\frac{dz^{[l]}}{db^{[l]}} = I^{[l]}
+\end{equation}
+where $I^{[l]}$ is the identity matrix for the $l^{\rm th}$ layer (dimension $n_h^{[l]}$).
+
+\begin{equation}
+\frac{dz^{[l]}}{dW^{[l]}} = \frac{d W_{jk}^{[l]} a_k^{[l-1]}}{dW_{mn}^{[l]}} = \delta_{jm} \delta_{kn} a_k^{[l-1]} = \delta_{jm} a_n^{[l-1]} = I^{[l]} \otimes a^{[l-1]}
+\end{equation}
+This is a 3rd-order tensor, where $\otimes$ indicates the outer product (not the Kronecker product $\otimes_K$). In most of the online references I looked into, this is often very simplified to being something akin to simply ${a^{[l-1]}}^T$. This bothers me so much that there is no clear derivation that details how such simplification is performed, or if it comes from vectorization of the weight matrix. Will attempt clear derivation here.
+
+\subsection{Recurrence}
+
+If we start with $l=L$:
+\begin{equation}
+\frac{dJ}{dz^{[L]}} =  \frac{dJ}{da^{[L]}} \frac{da^{[L]}}{dz^{[L]}} = \frac{dJ}{da^{[L]}} \mathrm{diag} \left( g'^{[L]} (z^{[L]}) \right) = \delta^{[L]}
+\end{equation}
+
+If we continue to layer $l=L-1$:
+\begin{equation}
+\frac{dJ}{dz^{[L-1]}} = \frac{dJ}{da^{[L]}} \frac{da^{[L]}}{dz^{[L]}} \frac{dz^{[L]}}{da^{[L-1]}} \frac{da^{[L-1]}}{dz^{[L-1]}} = \delta^{[L]} W^{[L]} \mathrm{diag} \left( g'^{[L-1]} (z^{[L-1]}) \right) = \delta^{[L-1]}
+\end{equation}
+
+And we can build the recurrence:
+\begin{equation}
+\delta^{[L]} = \frac{dJ}{da^{[L]}} \mathrm{diag} \left( g'^{[L]} (z^{[L]}) \right)
+\end{equation}
+\begin{equation}
+\delta^{[l-1]} = \delta^{[l]} W^{[l]} \mathrm{diag} \left( g'^{[l-1]} (z^{[l-1]})\right)
+\end{equation}
+where $\delta^{[l]}$ is a row vector of size $1 \times n_h^{[l]}$.
+
+Note: the transpose of these expressions are often used in derivations, e.g., Wikipedia, because they look at the gradient of the cost function, which by definition is the transpose (dual) of the total derivative (a linear map), e.g., $\nabla_b J = \left( \frac{dJ}{db} \right)^T$.
+
+\subsection{Final derivatives}
+
+Combining all the above:
+
+\begin{equation}
+\frac{dJ}{db^{[l]}} = \delta^{[l]}  I^{[l]} = \delta^{[l]}
+\end{equation}
+This is a row-vector that would be matrix-multiplied by a column vector $db$ to obtain the total differential due to change of $b$.
+
+\begin{equation}
+\frac{dJ}{dW^{[l]}} = \delta^{[l]} (I^{[l]} \otimes a^{[l-1]}) = d^{[l]}_j \delta_{jm} a_n^{[l-1]} = d^{[l]}_m a_n^{[l-1]} = (a^{[l-1]} \delta^{[l]})^T
+\end{equation}
+where $d^{[l]}_j$ is used as the index notation of $\delta^{[l]}$ to avoid confusion with the Kronecker delta symbol. The matrix $(a^{[l-1]} \delta^{[l]})^T$ has dimensions $(n_h^{[l]} \times n_h^{[l-1]})$.
+In index notation, the total differential due to change in $W$ is given by:
+\begin{equation}
+dJ = d^{[l]}_m a_n^{[l-1]} dW_{mn}
+\end{equation}
+Or equivalently in matrix calculus:
+\begin{equation}
+dJ = \mathrm{tr} \left( (a^{[l-1]} \delta^{[l]}) dW \right)
+\end{equation}
+
+With these expressions we fall back to the transposed equations usually obtained in the literature, I think because the definitions for the gradients wrt. a matrix becomes more complicated and has this reduction operator with the trace that cannot be avoided.
+
+I think we could make that cleaner by either using index notation everywhere (which I am starting to like for these annoying cases) or by vectorizing the weight matrix in order to have simpler definitions of the derivatives.
+
+
+\end{document}
