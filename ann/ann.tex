@@ -94,7 +94,7 @@ And we can build the recurrence:
 \delta^{[L]} = \frac{dJ}{da^{[L]}} \mathrm{diag} \left( g'^{[L]} (z^{[L]}) \right)
 \end{equation}
 \begin{equation}
-\delta^{[l-1]} = \delta^{[l]} W^{[l]} \mathrm{diag} \left( g'^{[l-1]} (z^{[l-1]})\right)
+\delta^{[l]} = \delta^{[l+1]} W^{[l+1]} \mathrm{diag} \left( g'^{[l]} (z^{[l]})\right)
 \end{equation}
 where $\delta^{[l]}$ is a row vector of size $1 \times n_h^{[l]}$.
 
@@ -112,7 +112,7 @@ This is a row-vector that would be matrix-multiplied by a column vector $db$ to 
 \begin{equation}
 \frac{dJ}{dW^{[l]}} = \delta^{[l]} (I^{[l]} \otimes a^{[l-1]}) = d^{[l]}_j \delta_{jm} a_n^{[l-1]} = d^{[l]}_m a_n^{[l-1]} = (a^{[l-1]} \delta^{[l]})^T
 \end{equation}
-where $d^{[l]}_j$ is used as the index notation of $\delta^{[l]}$ to avoid confusion with the Kronecker delta symbol. The matrix $(a^{[l-1]} \delta^{[l]})^T$ has dimensions $(n_h^{[l]} \times n_h^{[l-1]})$.
+where $d^{[l]}_j$ is used as the index notation of $\delta^{[l]}$ to avoid confusion with the Kronecker delta symbol. The matrix $(a^{[l-1]} \delta^{[l]})^T$ has dimensions $(n_h^{[l]} \times n_h^{[l-1]})$, same as $W$ and each entry corresponds to the derivative of the cost function $J$ with respect to each corresponding entry of $W$.
 In index notation, the total differential due to change in $W$ is given by:
 \begin{equation}
 dJ = d^{[l]}_m a_n^{[l-1]} dW_{mn}
