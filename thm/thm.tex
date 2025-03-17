@@ -1,0 +1,149 @@
+\documentclass[letterpaper,12pt,oneside]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amssymb,amsmath}
+\usepackage{multirow}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{bm}
+\setlength{\parskip}{12pt}
+\setlength{\parindent}{0pt}
+\usepackage[left=.6in,right=.6in,top=0.8in,bottom=0.8in]{geometry}
+%\usepackage[colorlinks=true,linkcolor=black,anchorcolor=black,citecolor=black,filecolor=black,menucolor=black,runcolor=black,urlcolor=black]{hyperref}
+\usepackage{hyperref}
+\usepackage{bm}
+
+
+\begin{document}
+\begin{center}
+Personal notes thermo-hydro-mechanical processes
+\end{center}
+
+
+I noticed variations in formulations between papers, textbooks and other resources and wrote this to make sense of it and have a basis I am satisfied with.
+
+\section{Water-saturated, undeformable porous medium}
+
+We assume a rigid granular skeleton saturated with incompressible liquid water, as a simple starting point.
+
+\subsection{Flow continuity equation}
+
+Under the assumptions of saturation and incompressibility, the water flux $\bm{q}$ must verify:
+\begin{equation}
+\nabla \cdot \bm{q} = 0
+\end{equation}
+where ``$\nabla \cdot$'' is the divergence operator, and the flux is assumed to follow Darcy's law
+\begin{equation}
+    \bm{q} = - \frac{k}{\mu} \nabla u
+\end{equation}
+where $k$ is the permeability (assumed isotropic here), $\mu$ the dynamic viscosity of water, and $u \geq 0$ the pore water pressure, and ``$\nabla$'' (without the ``$\cdot$'') is the gradient operator.
+
+\subsection{Heat diffusion-advection equation}
+
+Heat conduction (assuming Fourier's law), and advection of energy by means of water flow, gives the following equation:
+\begin{equation}
+(c_s \rho_s \varphi_s + c_w \rho_w \varphi_w) \frac{\partial T}{\partial t} - \nabla \cdot (\lambda_m \nabla T) + (c_w \rho_w) \nabla \cdot (\bm{q}T) = 0
+\end{equation}
+with $c_s$, $\rho_s$, $\varphi_s$ (resp. $c_w$, $\rho_w$, $\varphi_w$) the specific heat capacity, density, and volume fraction of the solid phase (resp. of water), all assumed constant (no compressibility, no thermal expansion etc), $\lambda_m$ the thermal conductivity of the mixture (whose expression depends on the mixture law selected, no specific choice made here).
+
+Because of the incompressibility, the advection term can be simplified to:
+\begin{equation}
+(c_s \rho_s \varphi_s + c_w \rho_w \varphi_w) \frac{\partial T}{\partial t} - \nabla \cdot (\lambda_m \nabla T) + (c_w \rho_w) \bm{q} \cdot \nabla T = 0
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Fully-saturated, deformable porous medium}
+
+\subsection{Momentum balance equation}
+
+We assume static / quasi-static equilibrium for simplicity, i.e., neglecting material derivative of the velocity. The Cauchy momentum equation becomes:
+\begin{equation}
+\nabla \cdot \bm{\sigma} + \rho \bm{b} = \bm{0}
+\end{equation}
+with $\bm{\sigma}$ the total Cauchy stress, $\rho$ the density of the medium and $\bm{b}$ the body forces.
+
+The total stress is broken down into the Terzaghi effective stress $\bm{\sigma}'$ and the pore pressure:
+\begin{equation}
+\bm{\sigma}' = \bm{\sigma} + u \bm{I}
+\end{equation}
+with $\bm{I}$ the second-order identity tensor, and sign conventions of engineering mechanics (tensile stress positive).
+
+\subsection{Flow continuity equation}
+
+Even though the fluid is incompressible, the divergence of the flux may now be non-zero because the soil is now deformable:
+\begin{equation}
+\nabla \cdot \bm{q} \neq 0
+\end{equation}
+
+We classically assume no variation in the volume of the solid grains $V_s$, but let the volume of the void $V_v$ ($V_v=V_w$ the volume of water under fully-saturated conditions) vary. Following Lambe and Whitman 1979 (Section 18.3), the net flow of water through an infinitesimal element of (Cartesian) dimensions $dx$, $dy$, $dz$: $-\nabla \cdot \bm{q} dx dy dz$, must equal the variation of water volume $\partial V_w / \partial t$, given (for a degree of saturation $S=1$) by
+\begin{equation}
+V_w = \frac{e}{1+e} dx dy dz
+\end{equation}
+The solid volume is given by $V_s = dxdydz/(1+e)$ and is assumed invariant.
+\paragraph*{Note:} it is interesting to notice that under that assumption, the variation in void volume must be accompanied by variations in the total volume $V=V_s+V_v$ and hence variations of the element dimensions $\partial (dxdydz)/\partial t \neq 0$, which is not commonly encountered in these kind of derivations. Variations in element dimensions are compensated in variations of void ratio so that $V_s$ remains invariant. In the limit of infinitesimal variations, these changes in dimensions are negligible to the calculation of the net flow $-\nabla \cdot \bm{q} dx dy dz$.
+
+Under that assumption, we obtain:
+\begin{equation}
+\frac{\partial V_w}{\partial t} = dx dy dz \frac{1}{1+e} \frac{\partial (e)}{\partial t} = dx dy dz \frac{V_s}{V} \frac{\partial V_v/V_s}{\partial t} = dx dy dz \frac{1}{V} \frac{\partial V_v}{\partial t} = dx dy dz \frac{\partial \varepsilon_v}{\partial t}
+\end{equation}
+where $\varepsilon_v = \ln(V/V_{ini})$ is the logarithmic volumetric strain. The mass balance for the fluid flow becomes:
+\begin{equation}
+-\nabla \cdot \bm{q} = \frac{\partial \varepsilon_v}{\partial t}
+\end{equation}
+
+
+\subsection{Heat diffusion-advection equation}
+
+The equation above is modified to account for the fact that the energy balance must account for the fact that the mass of water changes through time.
+
+The mass of solid does not change so the change in thermal energy in the solid phase remains $\Delta E_s = c_s m_s \Delta T$. At time $t$, there is a mass of water $m_w$ at temperature $T$ and a time $t+\Delta t$ there is a mass of water $m_w + \Delta m_w$ at temperature $T+\Delta T$, resulting in a variation of energy: $\Delta E_w = c_w m_w \Delta T + c_w \Delta m_w (T+\Delta T)$. From the above derivation, the variation in water mass is: $\Delta m_w = -\rho_w dx dy dz \nabla \cdot \bm{q} \Delta t$.
+Dividing the energy changes $\Delta E_s$ and $\Delta E_w$ by $dx dy dz \Delta t$ to express the volumetric energy balance rates, and taking the limit of infinitesimal variations, we obtain:
+\begin{equation}
+(c_s \rho_s \varphi_s + c_w \rho_w \varphi_w) \frac{\partial T}{\partial t} - c_w \rho_w \nabla \cdot \bm{q}T - \nabla \cdot (\lambda_m \nabla T) + (c_w \rho_w) \nabla \cdot (\bm{q}T) = 0
+\end{equation}
+and we can see that the compressible part of the advection term, cancels out with the energy variation due to the increase of the mass of water inside the element. After canceling these 2 terms, we get the same expression as the undeformable, incompressible equation:
+\begin{equation}
+(c_s \rho_s \varphi_s + c_w \rho_w \varphi_w) \frac{\partial T}{\partial t} - \nabla \cdot (\lambda_m \nabla T) + (c_w \rho_w) \bm{q} \cdot \nabla T = 0
+\end{equation}
+
+
+
+\section{Partially-saturated, deformable porous medium}
+
+\subsection{Flow continuity equation}
+SECTION TO FINALIZE
+%We follow the same approach as previously, but this time the void volume is not fully filled with water
+%
+%We classically assume no variation in the volume of the solid grains $V_s$, but let the volume of the void $V_v$ and the volume of water $V_w$ vary. Following Lambe and Whitman 1979 (Section 18.3), the net flow of water through an infinitesimal element of (Cartesian) dimensions $dx$, $dy$, $dz$: $\nabla \cdot \bm{q} dx dy dz$, must equal the variation of water volume $\partial V_w / \partial t$, given by
+%\begin{equation}
+%V_w = \frac{Se}{1+e} dx dy dz
+%\end{equation}
+%The solid volume is given by $V_s = dxdydz/(1+e)$ and is assumed invariant.
+%\paragraph*{Note:} it is interesting to notice that under that assumption, the variation in void volume must be accompanied by variations in the element dimensions, which is not commonly encountered in these kind of derivations, i.e., $\partial (dxdydz)/\partial t \neq 0$ and variations in element dimensions are compensated in variations of void ratio so that $V_s$ remains invariant. In the limit of infinitesimal variations, these changes in dimensions are negligible to the calculation of the net flow $\nabla \cdot \bm{q} dx dy dz$.
+%
+%
+%Under that assumption (Lambe and Whitman 1979, Equation (18.2)), we obtain:
+%\begin{equation}
+%\frac{\partial V_w}{\partial t} = dx dy dz \frac{1}{1+e} \frac{\partial (Se)}{\partial t}
+%\end{equation}
+%Noting that the volume fraction of water is given by
+
+\end{document}
+
+
+
+
+
+
+
